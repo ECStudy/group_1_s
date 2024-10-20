@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
+import { getCmdHandler, setCmdHandler } from './global.ts';
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand('tabgroup.sample', () => {
-    vscode.window.showInformationMessage('Hello World from Tab Group!');
-  });
+  setCmdHandler(context);
 
-  context.subscriptions.push(disposable);
+  const cmdHandler = getCmdHandler(context);
+  cmdHandler.forEach((command) => {
+    command.register();
+  });
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
