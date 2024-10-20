@@ -14,8 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "tabgroup.sample",
-        "title": "sample tab group"
+        "command": "create.sample",
+        "title": "create sample"
+      },
+      {
+        "command": "update.sample.name",
+        "title": "update sample name"
       }
     ]
   },
