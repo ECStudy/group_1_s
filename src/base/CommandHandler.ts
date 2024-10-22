@@ -14,11 +14,6 @@ export class CommandHandler {
     return this._commands.get(cmdName);
   }
 
-  public execute(cmdName: CMD_IDENTIFIER, params: any) {
-    const cmd = this.getCommand(cmdName);
-    cmd?.execute(params);
-  }
-
   public forEach(callback: (command: Command) => void) {
     this._commands.forEach((command) => callback(command));
   }
