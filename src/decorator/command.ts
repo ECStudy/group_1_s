@@ -1,9 +1,9 @@
-import { CMD_NAME } from '../types';
+import { CMD_IDENTIFIER } from '../types';
 
-export function command({ name }: { name: CMD_NAME }) {
+export function command({ identifier }: { identifier: CMD_IDENTIFIER }) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      _name = name;
+      _identifier = identifier;
     };
   };
 }
