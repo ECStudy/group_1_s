@@ -2,9 +2,16 @@ import { ExtensionContext, commands } from 'vscode';
 import { Disposable } from 'vscode';
 import { CMD_IDENTIFIER } from '../types';
 
-export abstract class Command<TParams = any> implements Disposable {
+type TCommandParams = Object;
+type TCommandResult = { done: boolean };
+export abstract class Command<
+  TParams extends TCommandParams = TCommandParams,
+  TResut extends TCommandResult = TCommandResult
+> implements Disposable
+{
   private _context: ExtensionContext;
   private _identifier: CMD_IDENTIFIER = undefined as any;
+  private _handler: () => void = undefined as any;
 
   constructor(context: ExtensionContext) {
     this._context = context;
@@ -15,16 +22,14 @@ export abstract class Command<TParams = any> implements Disposable {
   }
 
   register() {
-    const disposable = commands.registerCommand(this._identifier, this.handle);
+    const disposable = commands.registerCommand(this._identifier, this._handler);
 
     this._context.subscriptions.push(disposable);
   }
 
-  execute(params: TParams) {
-    commands.executeCommand(this._identifier, params);
+  async executeAsync(params: TParams): Promise<TResut> {
+    return await commands.executeCommand<TResut>(this._identifier, params);
   }
-
-  abstract handle(args: TParams): void;
 
   dispose() {}
 }
