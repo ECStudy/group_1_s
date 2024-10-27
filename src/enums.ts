@@ -5,11 +5,13 @@ export const enum ACTION {
   Save = 'save',
   View = 'view',
   Move = 'move',
+  Open = 'open',
+  Get = 'get',
 }
 
 export const enum FEATURE {
-  Sample = 'sample',
-  Tab = 'tab',
+  TextDocuments = 'textdocuments',
+  TreeItem = 'treeitem',
   Group = 'group',
 }
 
