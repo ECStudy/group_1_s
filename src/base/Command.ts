@@ -2,9 +2,13 @@ import { ExtensionContext, commands } from 'vscode';
 import { Disposable } from 'vscode';
 import { CMD_IDENTIFIER } from '../types';
 
-type TCommandParams = Object;
-type TCommandResult = { done: boolean };
-export abstract class Command<
+export interface TCommandParams {
+  context: ExtensionContext;
+}
+export interface TCommandResult {
+  done: boolean;
+}
+export abstract class CommandBase<
   TParams extends TCommandParams = TCommandParams,
   TResut extends TCommandResult = TCommandResult
 > implements Disposable
