@@ -10,7 +10,7 @@ export interface TCommandResult {
 }
 export abstract class CommandBase<
   TParams extends TCommandParams = TCommandParams,
-  TResut extends TCommandResult = TCommandResult
+  TResult extends TCommandResult = TCommandResult
 > implements Disposable
 {
   private _context: ExtensionContext;
@@ -31,8 +31,10 @@ export abstract class CommandBase<
     this._context.subscriptions.push(disposable);
   }
 
-  async executeAsync(params: TParams): Promise<TResut> {
-    return await commands.executeCommand<TResut>(this._identifier, params);
+  async executeAsync<TExecuteParams extends TParams = TParams, TExecuteResult extends TResult = TResult>(
+    params: Omit<TExecuteParams, 'context'>
+  ): Promise<TExecuteResult> {
+    return commands.executeCommand<TExecuteResult>(this._identifier, params);
   }
 
   dispose() {}

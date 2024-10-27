@@ -11,7 +11,7 @@ export class CommandHandler {
   }
 
   public getCommand(cmdIdentifier: CMD_IDENTIFIER) {
-    return this._commands.get(cmdIdentifier);
+    return this._commands.get(cmdIdentifier) as CommandBase;
   }
 
   public getCommands(cmdIdentifiers: CMD_IDENTIFIER[]) {
