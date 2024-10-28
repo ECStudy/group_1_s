@@ -12,6 +12,20 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "create.group",
+        "title": "새 그룹에 탭 추가"
+      }
+    ],
+    "menus": {
+      "editor/title/context": [
+        {
+          "command": "create.group",
+          "group": "navigation"
+        }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -24,12 +38,12 @@
     "views": {
       "tab-group": [
         {
-          "id": "current-tabs",
-          "name": "Current Tabs"
+          "id": "tabgroup",
+          "name": "탭그룹"
         },
         {
-          "id": "tab-group-bookmarks",
-          "name": "Bookmarks of Tab Groups"
+          "id": "tabgroup.bookmark",
+          "name": "탭그룹 북마크"
         }
       ]
     }
