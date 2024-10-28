@@ -1,2 +1,2 @@
-export { CommandBase, type TCommandParams, type TCommandResult } from './Command';
+export { CommandBase } from './Command';
 export { CommandHandler } from './CommandHandler';

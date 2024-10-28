@@ -1,21 +1,15 @@
-import { Command, TreeItem, TreeItemCollapsibleState, Uri } from 'vscode';
+import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { command } from '../decorator';
-import { CommandBase, TCommandParams, TCommandResult } from '../base';
+import { CommandBase } from '../base';
+import { CreateTreeItemParams, CreateTreeItemResult, ICreateTreeItemCmd } from '../types';
 
 @command({
   identifier: 'create.treeitem',
   handler: createTreeItemHandler,
 })
-export class CreateTreeItemCmd extends CommandBase<CreateTreeItemParams, CreateTreeItemResult> {}
-
-export interface CreateTreeItemParams extends TCommandParams {
-  label: string;
-  uri: Uri;
-  command?: Command;
-}
-export interface CreateTreeItemResult extends TCommandResult {
-  treeItem: TreeItem;
-}
+export class CreateTreeItemCmd
+  extends CommandBase<CreateTreeItemParams, CreateTreeItemResult>
+  implements ICreateTreeItemCmd {}
 
 function createTreeItemHandler({ label, uri, command }: CreateTreeItemParams): CreateTreeItemResult {
   const treeItem = new TreeItem(label, TreeItemCollapsibleState.None);

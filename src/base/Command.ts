@@ -1,17 +1,11 @@
 import { ExtensionContext, commands } from 'vscode';
 import { Disposable } from 'vscode';
-import { CMD_IDENTIFIER } from '../types';
+import { CMD_IDENTIFIER, CommandParams, CommandResult, ICommandBase } from '../types';
 
-export interface TCommandParams {
-  context: ExtensionContext;
-}
-export interface TCommandResult {
-  done: boolean;
-}
 export abstract class CommandBase<
-  TParams extends TCommandParams = TCommandParams,
-  TResult extends TCommandResult = TCommandResult
-> implements Disposable
+  TParams extends CommandParams = CommandParams,
+  TResult extends CommandResult = CommandResult
+> implements Disposable, ICommandBase<TParams, TResult>
 {
   private _context: ExtensionContext;
   private _identifier: CMD_IDENTIFIER = undefined as any;
@@ -31,10 +25,8 @@ export abstract class CommandBase<
     this._context.subscriptions.push(disposable);
   }
 
-  async executeAsync<TExecuteParams extends TParams = TParams, TExecuteResult extends TResult = TResult>(
-    params: Omit<TExecuteParams, 'context'>
-  ): Promise<TExecuteResult> {
-    return commands.executeCommand<TExecuteResult>(this._identifier, params);
+  async executeAsync(params: Omit<TParams, 'context'>): Promise<TResult> {
+    return commands.executeCommand<TResult>(this._identifier, params);
   }
 
   dispose() {}

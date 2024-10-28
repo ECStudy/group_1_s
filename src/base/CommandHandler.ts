@@ -1,5 +1,5 @@
 import { CommandBase } from './Command';
-import { CMD_IDENTIFIER } from '../types';
+import { CMD_IDENTIFIER, CommandInterfaceOrDefault } from '../types';
 
 export class CommandHandler {
   private _commands: Map<CMD_IDENTIFIER, CommandBase> = new Map();
@@ -10,8 +10,8 @@ export class CommandHandler {
     });
   }
 
-  public getCommand(cmdIdentifier: CMD_IDENTIFIER) {
-    return this._commands.get(cmdIdentifier) as CommandBase;
+  public getCommand<IIdentifier extends CMD_IDENTIFIER>(cmdIdentifier: IIdentifier) {
+    return this._commands.get(cmdIdentifier) as unknown as CommandInterfaceOrDefault<IIdentifier>;
   }
 
   public getCommands(cmdIdentifiers: CMD_IDENTIFIER[]) {

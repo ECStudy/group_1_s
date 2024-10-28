@@ -1,17 +1,13 @@
 import { workspace, TextDocument } from 'vscode';
-import { CommandBase, TCommandParams, TCommandResult } from '../base';
+import { CommandBase } from '../base';
 import { command } from '../decorator';
+import { GetTextDocumentsParams, GetTextDocumentsResult, IGetTextDocumentsCmd } from '../types';
 const fs = require('fs');
 
 @command({ identifier: 'get.textdocuments', handler: getTextDocumentsHandler })
-export class GetTextDocumentsCmd extends CommandBase {}
-
-export interface GetTextDocumentsParams extends TCommandParams {
-  onlyWritable?: boolean;
-}
-export interface GetTextDocumentsResult extends TCommandResult {
-  textDocuments: TextDocument[];
-}
+export class GetTextDocumentsCmd
+  extends CommandBase<GetTextDocumentsParams, GetTextDocumentsResult>
+  implements IGetTextDocumentsCmd {}
 
 function getTextDocumentsHandler({ onlyWritable }: GetTextDocumentsParams): GetTextDocumentsResult {
   const openedDocuments = [...workspace.textDocuments];
