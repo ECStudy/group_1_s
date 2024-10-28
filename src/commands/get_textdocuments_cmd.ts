@@ -1,5 +1,5 @@
 import { workspace, TextDocument } from 'vscode';
-import { CommandBase } from '../base';
+import { CommandBase } from './CommandBase';
 import { command } from '../decorator';
 import { GetTextDocumentsParams, GetTextDocumentsResult, IGetTextDocumentsCmd } from '../types';
 const fs = require('fs');

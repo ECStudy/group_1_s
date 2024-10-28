@@ -1,7 +1,16 @@
-import { EventEmitter, ExtensionContext, TreeDataProvider, TreeItem, Event, ProviderResult, workspace } from 'vscode';
-import { getCmdHandler } from './cmdHandler';
+import {
+  EventEmitter,
+  ExtensionContext,
+  TreeDataProvider,
+  TreeItem,
+  Event,
+  ProviderResult,
+  workspace,
+  window,
+} from 'vscode';
+import { getCommandProvider } from './CommandProvider';
 
-export class CurrentTabsProvider implements TreeDataProvider<TreeItem> {
+export class TabGroupDataProvider implements TreeDataProvider<TreeItem> {
   private _context: ExtensionContext;
   private _onDidChangeTreeData: EventEmitter<void> = new EventEmitter<void>();
   readonly onDidChangeTreeData: Event<void> = this._onDidChangeTreeData.event;
@@ -25,19 +34,19 @@ export class CurrentTabsProvider implements TreeDataProvider<TreeItem> {
   }
 
   private async _getTreeItems() {
-    const cmdHandler = getCmdHandler(this._context);
+    const commandProvider = getCommandProvider();
 
     // ---------------------------------------------
     // 현재 열려 있는 writable한 textDocument 모두 가져오기
     // ---------------------------------------------
-    const getTextDocumentsCmd = cmdHandler.getCommand<'get.textdocuments'>('get.textdocuments');
+    const getTextDocumentsCmd = commandProvider.getCommand<'get.textdocuments'>('get.textdocuments');
     const { done, textDocuments } = await getTextDocumentsCmd.executeAsync({ onlyWritable: true });
     if (!done) return [];
 
     // ---------------------------------------------
     // 가져온 textDocument 정보를 바탕으로 TreeItem 생성
     // ---------------------------------------------
-    const createTreeItemCmd = cmdHandler.getCommand<'create.treeitem'>('create.treeitem');
+    const createTreeItemCmd = commandProvider.getCommand<'create.treeitem'>('create.treeitem');
     const treeItems: TreeItem[] = [];
 
     for (const textDocument of textDocuments) {
@@ -62,3 +71,13 @@ export class CurrentTabsProvider implements TreeDataProvider<TreeItem> {
     return treeItems;
   }
 }
+
+let tabGroupDataProvider: TabGroupDataProvider;
+export const setTabGroupDataProvider = (context: ExtensionContext) => {
+  tabGroupDataProvider = new TabGroupDataProvider(context);
+  window.registerTreeDataProvider('tabgroup', tabGroupDataProvider);
+};
+
+export const getTabGroupDataProvider = () => {
+  return tabGroupDataProvider;
+};

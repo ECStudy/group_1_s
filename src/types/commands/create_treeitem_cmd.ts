@@ -1,5 +1,5 @@
 import { Command, TreeItem, Uri } from 'vscode';
-import { CommandParams, CommandResult, ICommandBase } from '../Command';
+import { CommandParams, CommandResult, ICommandBase } from '../ICommadBas';
 
 export interface CreateTreeItemParams extends CommandParams {
   label: string;

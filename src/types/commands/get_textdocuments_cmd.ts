@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode';
-import { CommandParams, CommandResult, ICommandBase } from '../Command';
+import { CommandParams, CommandResult, ICommandBase } from '../ICommadBas';
 
 export interface GetTextDocumentsParams extends CommandParams {
   onlyWritable?: boolean;

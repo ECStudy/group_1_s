@@ -1,6 +1,6 @@
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { command } from '../decorator';
-import { CommandBase } from '../base';
+import { CommandBase } from './CommandBase';
 import { CreateTreeItemParams, CreateTreeItemResult, ICreateTreeItemCmd } from '../types';
 
 @command({

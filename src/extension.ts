@@ -1,25 +1,25 @@
 import * as vscode from 'vscode';
-import { getCmdHandler, setCmdHandler } from './global.ts';
-import { CurrentTabsProvider } from './global.ts';
+import { getCommandProvider, setCommandProvider, getTabGroupDataProvider, setTabGroupDataProvider } from './provider';
+
 const fs = require('fs');
 
 export function activate(context: vscode.ExtensionContext) {
-  setCmdHandler(context);
+  setCommandProvider(context);
 
-  const cmdHandler = getCmdHandler(context);
+  const cmdHandler = getCommandProvider();
   cmdHandler.forEach((command) => {
     command.register();
   });
 
-  const currentTabsProvider = new CurrentTabsProvider(context);
-  vscode.window.registerTreeDataProvider('current-tabs', currentTabsProvider);
+  setTabGroupDataProvider(context);
+  const tabGroupDataProvider = getTabGroupDataProvider();
 
   vscode.window.onDidChangeActiveTextEditor(() => {
-    currentTabsProvider.refresh();
+    tabGroupDataProvider.refresh();
   });
 
   vscode.window.tabGroups.onDidChangeTabs(() => {
-    currentTabsProvider.refresh();
+    tabGroupDataProvider.refresh();
   });
 }
 
