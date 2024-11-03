@@ -20,3 +20,8 @@ export const enum MODIFIER {
   Color = 'color',
   List = 'list',
 }
+
+export const enum CONFIRM_OPTION {
+  Ok = 'ok',
+  Cancel = 'cancel',
+}

@@ -2,24 +2,23 @@
 // command identifier
 // --------------------------------------
 import { ACTION, FEATURE, MODIFIER } from '../enums';
-import { ICommandBase } from './ICommadBas';
+import { ICommandBase } from './ICommadBase';
 export type CMD_IDENTIFIER = `${ACTION}.${FEATURE}` | `${ACTION}.${FEATURE}.${MODIFIER}`;
 
 // --------------------------------------
 // command interface, params, result
 // --------------------------------------
 export * from './commands';
-export * from './ICommadBas';
+export * from './ICommadBase';
 
 // --------------------------------------
 // command interface mapper
 // --------------------------------------
-import { ICreateGroupCmd, ICreateTreeItemCmd, IGetTextDocumentsCmd } from './commands';
+import { ICreateGroupCmd, IGetGroupNameCmd } from './commands';
 
 type command_types = {
   ['create.group']: ICreateGroupCmd;
-  ['create.treeitem']: ICreateTreeItemCmd;
-  ['get.textdocuments']: IGetTextDocumentsCmd;
+  ['get.group.name']: IGetGroupNameCmd;
 };
 
 export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyof command_types

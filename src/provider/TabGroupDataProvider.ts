@@ -1,81 +1,77 @@
-import {
-  EventEmitter,
-  ExtensionContext,
-  TreeDataProvider,
-  TreeItem,
-  Event,
-  ProviderResult,
-  workspace,
-  window,
-} from 'vscode';
-import { getCommandProvider } from './CommandProvider';
+import * as vscode from 'vscode';
+import { Group, Tab } from '../tree';
 
-export class TabGroupDataProvider implements TreeDataProvider<TreeItem> {
-  private _context: ExtensionContext;
-  private _onDidChangeTreeData: EventEmitter<void> = new EventEmitter<void>();
-  readonly onDidChangeTreeData: Event<void> = this._onDidChangeTreeData.event;
+export class TabGroupDataProvider implements vscode.TreeDataProvider<string> {
+  private _context: vscode.ExtensionContext;
+  private _groups: string[];
 
-  constructor(context: ExtensionContext) {
+  private _groupMapper: Map<string, Group>;
+  private _tabMapper: Map<string, Tab>;
+
+  private _onDidChangeTreeData: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+  readonly onDidChangeTreeData: vscode.Event<void> = this._onDidChangeTreeData.event;
+
+  constructor(context: vscode.ExtensionContext) {
     this._context = context;
+    this._groups = [];
+    this._groupMapper = new Map();
+    this._tabMapper = new Map();
   }
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
   }
 
-  getTreeItem(element: TreeItem): TreeItem {
-    return element;
-  }
-
-  getChildren(element?: TreeItem): ProviderResult<TreeItem[]> {
-    if (element) return [];
-
-    return this._getTreeItems();
-  }
-
-  private async _getTreeItems() {
-    const commandProvider = getCommandProvider();
-
-    // ---------------------------------------------
-    // 현재 열려 있는 writable한 textDocument 모두 가져오기
-    // ---------------------------------------------
-    const getTextDocumentsCmd = commandProvider.getCommand<'get.textdocuments'>('get.textdocuments');
-    const { done, textDocuments } = await getTextDocumentsCmd.executeAsync({ onlyWritable: true });
-    if (!done) return [];
-
-    // ---------------------------------------------
-    // 가져온 textDocument 정보를 바탕으로 TreeItem 생성
-    // ---------------------------------------------
-    const createTreeItemCmd = commandProvider.getCommand<'create.treeitem'>('create.treeitem');
-    const treeItems: TreeItem[] = [];
-
-    for (const textDocument of textDocuments) {
-      const { done, treeItem } = await createTreeItemCmd.executeAsync({
-        label: workspace.asRelativePath(textDocument.uri.fsPath),
-        uri: textDocument.uri,
-        command: {
-          command: 'open',
-          title: 'Open File',
-          arguments: [textDocument.uri],
-        },
-      });
-
-      if (!done) continue;
-
-      treeItems.push(treeItem);
+  getTreeItem(element: string): vscode.TreeItem {
+    const group = this._groupMapper.get(element);
+    if (group) {
+      return group;
     }
 
-    // ---------------------------------------------
-    // 결과 반환
-    // ---------------------------------------------
-    return treeItems;
+    const tab = this._tabMapper.get(element);
+    if (tab) {
+      return tab;
+    }
+
+    throw new Error('no tree item');
+  }
+
+  getChildren(id?: string): vscode.ProviderResult<string[]> {
+    if (!id) {
+      return this._groups;
+    }
+
+    const group = this._groupMapper.get(id);
+
+    if (!group) {
+      throw new Error('no group');
+    }
+
+    return group.children;
+  }
+
+  createGroup({ id, label, children }: { id: string; label: vscode.TreeItemLabel; children: string[] }) {
+    const group = new Group(id, label, children);
+
+    this._groupMapper.set(id, group);
+    this._groups.push(id);
+
+    return group;
+  }
+
+  createTab({ id, label }: { id: string; label: vscode.TreeItemLabel }) {
+    const tab = new Tab(id, label);
+
+    this._tabMapper.set(id, tab);
+
+    return tab;
   }
 }
 
 let tabGroupDataProvider: TabGroupDataProvider;
-export const setTabGroupDataProvider = (context: ExtensionContext) => {
+export const setTabGroupDataProvider = (context: vscode.ExtensionContext) => {
   tabGroupDataProvider = new TabGroupDataProvider(context);
-  window.registerTreeDataProvider('tabgroup', tabGroupDataProvider);
+  vscode.window.registerTreeDataProvider('tabgroup', tabGroupDataProvider);
 };
 
 export const getTabGroupDataProvider = () => {

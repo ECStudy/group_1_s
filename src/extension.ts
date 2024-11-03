@@ -12,15 +12,6 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   setTabGroupDataProvider(context);
-  const tabGroupDataProvider = getTabGroupDataProvider();
-
-  vscode.window.onDidChangeActiveTextEditor(() => {
-    tabGroupDataProvider.refresh();
-  });
-
-  vscode.window.tabGroups.onDidChangeTabs(() => {
-    tabGroupDataProvider.refresh();
-  });
 }
 
 export function deactivate() {}
