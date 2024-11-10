@@ -14,15 +14,20 @@ export * from './ICommadBase';
 // --------------------------------------
 // command interface mapper
 // --------------------------------------
-import { ICreateGroupCmd, IGetGroupNameCmd } from './commands';
+import { ICreateGroupCmd, IGetGroupNameCmd, IGetTabNameCmd, IUpdateGroupChildrenCmd } from './commands';
 
 type command_types = {
   ['create.group']: ICreateGroupCmd;
+  ['update.group.children']: IUpdateGroupChildrenCmd;
   ['get.group.name']: IGetGroupNameCmd;
+  ['get.tab.name']: IGetTabNameCmd;
 };
 
 export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyof command_types
   ? command_types[T]
   : ICommandBase;
 
-type a = CommandInterfaceOrDefault<'create.treeitem'>;
+// --------------------------------------
+// quick pick
+// --------------------------------------
+export * from './quick_pick';

@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { Group, Tab } from '../tree';
+import { GroupQuickPickItem } from '../types';
+import { command } from '../decorator';
 
 export class TabGroupDataProvider implements vscode.TreeDataProvider<string> {
   private _context: vscode.ExtensionContext;
@@ -59,12 +61,113 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<string> {
     return group;
   }
 
-  createTab({ id, label }: { id: string; label: vscode.TreeItemLabel }) {
+  createTab({ id, label, command }: { id: string; label: vscode.TreeItemLabel; command?: vscode.Command }) {
     const tab = new Tab(id, label);
+    tab.command = command;
 
     this._tabMapper.set(id, tab);
 
     return tab;
+  }
+
+  getGroups(ids?: string[]): Group[] {
+    const groups: Group[] = [];
+
+    (ids ?? this._groups).forEach((id) => {
+      const group = this._groupMapper.get(id);
+      if (group) groups.push(group);
+    });
+
+    return groups;
+  }
+
+  getGroupsAsQuickPickItem(ids?: string[]): GroupQuickPickItem[] {
+    const groups: GroupQuickPickItem[] = [];
+    (ids ?? this._groups).forEach((group_id) => {
+      const group = this._groupMapper.get(group_id);
+      if (!group) return;
+
+      groups.push({
+        id: group_id,
+        label: group.toString(),
+      });
+    });
+
+    return groups;
+  }
+
+  hasGroup(params: { label?: string } | { id?: string }) {
+    if ('id' in params && params.id) {
+      return this._groupMapper.has(params.id);
+    }
+
+    if ('label' in params && params.label) {
+      return !!this._groups.find((group_id) => {
+        return this._groupMapper.get(group_id)?.toString() === params.label;
+      });
+    }
+
+    return false;
+  }
+
+  updateGroup(params: {
+    id: string;
+    label?: vscode.TreeItemLabel;
+    children?: string[];
+    collapsibleState?: vscode.TreeItemCollapsibleState;
+  }) {
+    const group = this._groupMapper.get(params.id);
+    if (!group) return;
+
+    if (params.label) {
+      group.label = params.label;
+    }
+
+    if (params.children) {
+      group.children = params.children;
+    }
+
+    if (params.collapsibleState) {
+      group.collapsibleState = params.collapsibleState;
+    }
+  }
+
+  updateGroupChildren(params: {
+    id: string;
+    children: { id: string; label: vscode.TreeItemLabel; command?: vscode.Command }[];
+    updateType: 'all' | 'push' | 'modify';
+  }) {
+    const group = this._groupMapper.get(params.id);
+    if (!group) return;
+
+    switch (params.updateType) {
+      case 'all': {
+        const children = params.children.map((child) => {
+          const tab = this.createTab(child);
+          return tab.id;
+        });
+
+        group.children = children;
+        break;
+      }
+      case 'push': {
+        const children = params.children.map((child) => {
+          const tab = this.createTab(child);
+          return tab.id;
+        });
+
+        group.children.push(...children);
+        break;
+      }
+      case 'modify': {
+        params.children.forEach(({ id, label }) => {
+          const child = this._tabMapper.get(id);
+          if (!child) return;
+
+          child.label = label;
+        });
+      }
+    }
   }
 }
 

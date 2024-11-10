@@ -1,23 +1,27 @@
-import * as path from 'path';
+import * as vscode from 'vscode';
 import { command } from '../decorator';
 import { CommandBase } from './CommandBase';
 import { CreateGroupParams, CreateGroupResult, ICreateGroupCmd } from '../types';
 import { getCommandProvider, getTabGroupDataProvider } from '../provider';
-import { generateUUID, isUri } from '../utils';
+import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 
 @command({
   identifier: 'create.group',
-  handler: createTreeItemHandler,
+  handler: createGroupHandler,
 })
 export class CreateGroupCmd extends CommandBase<CreateGroupParams, CreateGroupResult> implements ICreateGroupCmd {}
 
-async function createTreeItemHandler(params: CreateGroupParams): Promise<CreateGroupResult> {
-  const getTabNameResult = getTabName(params);
+async function createGroupHandler(params: CreateGroupParams): Promise<CreateGroupResult> {
+  const getTabNameResult = await getTabName(params);
+  if (!isUri(params)) {
+    return { done: false };
+  }
+
   if (!getTabNameResult.done) {
     return { done: false };
   }
 
-  const getTabResult = createTab(getTabNameResult.tabName);
+  const getTabResult = createTab(getTabNameResult.name, params);
   if (!getTabNameResult.done) {
     return { done: false };
   }
@@ -38,19 +42,19 @@ async function createTreeItemHandler(params: CreateGroupParams): Promise<CreateG
   return { done: true };
 }
 
-function getTabName(params: CreateGroupParams) {
-  if (isUri(params)) {
-    return { done: true, tabName: path.basename(params.fsPath) };
-  }
+async function getTabName(params: CreateGroupParams) {
+  const commandProvider = getCommandProvider();
+  const groupNameCmd = commandProvider.getCommand('get.tab.name');
 
-  return { done: false, tabName: '' };
+  return await groupNameCmd.executeAsync(params);
 }
 
-function createTab(tabName: string) {
+function createTab(tabName: string, uri: vscode.Uri) {
   const tabGroupProvider = getTabGroupDataProvider();
   const tab = tabGroupProvider.createTab({
     id: generateUUID(),
     label: { label: tabName },
+    command: getOpenFileCommand({ uri }),
   });
 
   return { done: true, tab };

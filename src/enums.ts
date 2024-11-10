@@ -10,15 +10,14 @@ export const enum ACTION {
 }
 
 export const enum FEATURE {
-  TextDocuments = 'textdocuments',
-  TreeItem = 'treeitem',
   Group = 'group',
+  Tab = 'tab',
 }
 
 export const enum MODIFIER {
   Name = 'name',
   Color = 'color',
-  List = 'list',
+  Chilren = 'children',
 }
 
 export const enum CONFIRM_OPTION {

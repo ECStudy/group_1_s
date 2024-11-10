@@ -16,12 +16,30 @@
       {
         "command": "create.group",
         "title": "새 그룹에 탭 추가"
+      },
+      {
+        "command": "update.group.children",
+        "title": "기존 그룹에 탭 추가"
       }
     ],
     "menus": {
       "editor/title/context": [
         {
           "command": "create.group",
+          "group": "navigation"
+        },
+        {
+          "command": "update.group.children",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "create.group",
+          "group": "navigation"
+        },
+        {
+          "command": "update.group.children",
           "group": "navigation"
         }
       ]
