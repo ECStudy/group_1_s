@@ -1,10 +1,15 @@
 import * as vscode from 'vscode';
 import { command } from '../decorator';
 import { CommandBase } from './CommandBase';
-import { UpdateGroupChildrenParams, UpdateGroupChildrenResult, IUpdateGroupChildrenCmd } from '../types';
+import {
+  UpdateGroupChildrenParams,
+  UpdateGroupChildrenResult,
+  IUpdateGroupChildrenCmd,
+  TabAttr,
+  GroupQuickPickItem,
+} from '../types';
 import { getCommandProvider, getTabGroupDataProvider } from '../provider';
-import { GroupQuickPickItem } from '../types';
-import { generateUUID, getOpenFileCommand, isUri } from '../utils';
+import { getOpenFileCommand, isUri } from '../utils';
 
 @command({
   identifier: 'update.group.children',
@@ -34,16 +39,15 @@ async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Pr
     return { done: false };
   }
 
-  const targetTab = {
-    id: generateUUID(),
+  const targetTab: TabAttr = {
     label: { label: getTabNameResult.name },
+    uri: params,
     command: getOpenFileCommand({ uri: params }),
   };
 
-  tabGroupProvider.updateGroupChildren({
-    id: picked_group.id,
+  tabGroupProvider.pushChildren({
+    groupId: picked_group.id,
     children: [targetTab],
-    updateType: 'push',
   });
 
   tabGroupProvider.refresh();

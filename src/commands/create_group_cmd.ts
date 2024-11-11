@@ -1,7 +1,6 @@
-import * as vscode from 'vscode';
 import { command } from '../decorator';
 import { CommandBase } from './CommandBase';
-import { CreateGroupParams, CreateGroupResult, ICreateGroupCmd } from '../types';
+import { CreateGroupParams, CreateGroupResult, ICreateGroupCmd, TabAttr } from '../types';
 import { getCommandProvider, getTabGroupDataProvider } from '../provider';
 import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 
@@ -12,69 +11,42 @@ import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 export class CreateGroupCmd extends CommandBase<CreateGroupParams, CreateGroupResult> implements ICreateGroupCmd {}
 
 async function createGroupHandler(params: CreateGroupParams): Promise<CreateGroupResult> {
-  const getTabNameResult = await getTabName(params);
   if (!isUri(params)) {
     return { done: false };
   }
 
+  const commandProvider = getCommandProvider();
+
+  const getTabNameCommand = commandProvider.getCommand('get.tab.name');
+  const getTabNameResult = await getTabNameCommand.executeAsync(params);
   if (!getTabNameResult.done) {
     return { done: false };
   }
 
-  const getTabResult = createTab(getTabNameResult.name, params);
-  if (!getTabNameResult.done) {
-    return { done: false };
-  }
-
-  const getGroupNameResult = await getGroupName();
+  const groupNameCommand = commandProvider.getCommand('get.group.name');
+  const getGroupNameResult = await groupNameCommand.executeAsync();
   if (!getGroupNameResult) {
     return { done: false };
   }
 
-  const createGroupResult = createGroup(getGroupNameResult.name, [getTabResult.tab.id]);
-  if (!createGroupResult.done) {
-    return { done: false };
-  }
-
   const tabGroupProvider = getTabGroupDataProvider();
+  const group = tabGroupProvider.createGroup({
+    id: generateUUID(),
+    label: { label: getGroupNameResult.name },
+  });
+
+  const tab: TabAttr = {
+    label: { label: getTabNameResult.name },
+    uri: params,
+    command: getOpenFileCommand({ uri: params }),
+  };
+
+  tabGroupProvider.pushChildren({
+    groupId: group.id,
+    children: [tab],
+  });
+
   tabGroupProvider.refresh();
 
   return { done: true };
-}
-
-async function getTabName(params: CreateGroupParams) {
-  const commandProvider = getCommandProvider();
-  const groupNameCmd = commandProvider.getCommand('get.tab.name');
-
-  return await groupNameCmd.executeAsync(params);
-}
-
-function createTab(tabName: string, uri: vscode.Uri) {
-  const tabGroupProvider = getTabGroupDataProvider();
-  const tab = tabGroupProvider.createTab({
-    id: generateUUID(),
-    label: { label: tabName },
-    command: getOpenFileCommand({ uri }),
-  });
-
-  return { done: true, tab };
-}
-
-async function getGroupName() {
-  const commandProvider = getCommandProvider();
-  const groupNameCmd = commandProvider.getCommand('get.group.name');
-
-  return await groupNameCmd.executeAsync();
-}
-
-function createGroup(groupName: string, children: string[]) {
-  const tabGroupProvider = getTabGroupDataProvider();
-
-  const group = tabGroupProvider.createGroup({
-    id: generateUUID(),
-    label: { label: groupName },
-    children: children,
-  });
-
-  return { done: true, group };
 }

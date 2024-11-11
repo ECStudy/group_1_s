@@ -31,3 +31,14 @@ export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyo
 // quick pick
 // --------------------------------------
 export * from './quick_pick';
+
+// --------------------------------------
+// provier
+// --------------------------------------
+export * from './ITabGroupProvider';
+
+// --------------------------------------
+// tab, group
+// --------------------------------------
+export * from './ITab';
+export * from './IGroup';
