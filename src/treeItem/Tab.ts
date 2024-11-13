@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { ITab } from '../types';
 
-export class Tab extends vscode.TreeItem implements ITab {
+export class Tab extends vscode.TreeItem {
   id: string;
   label: vscode.TreeItemLabel;
   uri: vscode.Uri;
+  contextValue: string;
 
   constructor(id: string, label: vscode.TreeItemLabel, uri: vscode.Uri) {
     super(label, vscode.TreeItemCollapsibleState.None);
@@ -12,6 +12,7 @@ export class Tab extends vscode.TreeItem implements ITab {
     this.id = id;
     this.label = label;
     this.uri = uri;
+    this.contextValue = 'defaultTab';
   }
 
   toString() {

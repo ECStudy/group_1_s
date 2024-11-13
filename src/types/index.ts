@@ -14,13 +14,14 @@ export * from './ICommadBase';
 // --------------------------------------
 // command interface mapper
 // --------------------------------------
-import { ICreateGroupCmd, IGetGroupNameCmd, IGetTabNameCmd, IUpdateGroupChildrenCmd } from './commands';
+import { ICreateGroupCmd, IDeleteTabCmd, IGetGroupNameCmd, IGetTabNameCmd, IUpdateGroupChildrenCmd } from './commands';
 
 type command_types = {
   ['create.group']: ICreateGroupCmd;
   ['update.group.children']: IUpdateGroupChildrenCmd;
   ['get.group.name']: IGetGroupNameCmd;
   ['get.tab.name']: IGetTabNameCmd;
+  ['delete.tab']: IDeleteTabCmd;
 };
 
 export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyof command_types
@@ -33,12 +34,18 @@ export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyo
 export * from './quick_pick';
 
 // --------------------------------------
-// provier
-// --------------------------------------
-export * from './ITabGroupProvider';
-
-// --------------------------------------
 // tab, group
 // --------------------------------------
-export * from './ITab';
-export * from './IGroup';
+import * as vscode from 'vscode';
+export interface TabAttr {
+  label: vscode.TreeItemLabel;
+  uri: vscode.Uri;
+  command?: vscode.Command;
+}
+export interface TabAttrWithGroupId extends TabAttr {
+  groupId: string;
+}
+export interface ITreeItem {
+  id: string;
+  parentId?: string;
+}

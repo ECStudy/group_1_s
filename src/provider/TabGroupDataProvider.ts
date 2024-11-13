@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { Group, Tab } from '../tree';
-import { GroupQuickPickItem, ITabGroupProvider, TabAttr, TabAttrWithGroupId } from '../types';
+import { GroupQuickPickItem, ITreeItem, TabAttr, TabAttrWithGroupId } from '../types';
+import { Group, Tab } from '../treeItem';
 
-export class TabGroupDataProvider implements ITabGroupProvider {
+export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> {
   private _context: vscode.ExtensionContext;
-  private _groups: { id: string; parentId?: string }[];
+  private _groups: ITreeItem[];
   private _groupMapper: Map<string, Group>;
 
   private _onDidChangeTreeData: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
@@ -20,7 +20,7 @@ export class TabGroupDataProvider implements ITabGroupProvider {
     this._onDidChangeTreeData.fire();
   }
 
-  getTreeItem(element: { id: string; parentId?: string }) {
+  getTreeItem(element: ITreeItem) {
     const group = this._groupMapper.get(element.id);
     if (group) {
       return group;
@@ -39,7 +39,7 @@ export class TabGroupDataProvider implements ITabGroupProvider {
     throw new Error('no tree item');
   }
 
-  getChildren(element?: { id: string; parentId?: string }) {
+  getChildren(element?: ITreeItem) {
     if (!element) {
       return this._groups;
     }
@@ -62,13 +62,29 @@ export class TabGroupDataProvider implements ITabGroupProvider {
     return group.createTab(params);
   }
 
-  getTab(groupId: string, predicate: string | ((tab: Tab) => boolean)) {
+  getTab(groupId: string, tabId: string): Tab;
+  getTab(groupId: string, predicate: (tab: Tab) => boolean): Tab;
+  getTab(groupId: string, predicate: string | ((tab: Tab) => boolean)): Tab {
     const group = this._groupMapper.get(groupId);
     if (!group) {
       throw new Error('no group');
     }
 
-    return group.getTab(predicate);
+    return group.getTab(predicate as any);
+  }
+
+  deleteTab(groupId: string, tabId: string): void;
+  deleteTab(groupId: string, predicate: (tab: Tab) => boolean): void;
+  deleteTab(groupId: string, predicate: string | ((tab: Tab) => boolean)): void {
+    const group = this._groupMapper.get(groupId);
+    if (!group) {
+      throw new Error('no group');
+    }
+
+    group.deleteTab(predicate as any);
+    if (group.children.length === 0) {
+      this.deleteGroup(groupId);
+    }
   }
 
   createGroup({ id, label }: { id: string; label: vscode.TreeItemLabel }) {
@@ -171,9 +187,14 @@ export class TabGroupDataProvider implements ITabGroupProvider {
       group.createTab(child);
     }
   }
+
+  deleteGroup(groupId: string) {
+    this._groupMapper.delete(groupId);
+    this._groups = this._groups.filter(({ id }) => id !== groupId);
+  }
 }
 
-let tabGroupDataProvider: ITabGroupProvider;
+let tabGroupDataProvider: TabGroupDataProvider;
 export const setTabGroupDataProvider = (context: vscode.ExtensionContext) => {
   tabGroupDataProvider = new TabGroupDataProvider(context);
   vscode.window.registerTreeDataProvider('tabgroup', tabGroupDataProvider);

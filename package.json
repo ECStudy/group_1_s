@@ -20,6 +20,10 @@
       {
         "command": "update.group.children",
         "title": "기존 그룹에 탭 추가"
+      },
+      {
+        "command": "delete.tab",
+        "title": "그룹에서 탭 삭제"
       }
     ],
     "menus": {
@@ -40,6 +44,13 @@
         },
         {
           "command": "update.group.children",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "delete.tab",
+          "when": "viewItem == defaultTab",
           "group": "navigation"
         }
       ]
