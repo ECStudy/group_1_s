@@ -18,20 +18,20 @@
         "title": "새 그룹에 탭 추가"
       },
       {
-        "command": "update.group.children",
-        "title": "기존 그룹에 탭 추가"
-      },
-      {
-        "command": "delete.tab",
-        "title": "그룹에서 탭 삭제"
-      },
-      {
         "command": "delete.group",
         "title": "그룹 삭제"
       },
       {
         "command": "update.group.name",
         "title": "그룹 이름 수정"
+      },
+      {
+        "command": "update.group.children",
+        "title": "기존 그룹에 탭 추가"
+      },
+      {
+        "command": "delete.tab",
+        "title": "그룹에서 탭 삭제"
       }
     ],
     "menus": {

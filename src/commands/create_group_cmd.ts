@@ -7,6 +7,7 @@ import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 @command({
   identifier: 'create.group',
   handler: createGroupHandler,
+  register: true,
 })
 export class CreateGroupCmd extends CommandBase<CreateGroupParams, CreateGroupResult> implements ICreateGroupCmd {}
 

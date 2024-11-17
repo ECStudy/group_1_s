@@ -7,7 +7,8 @@ export abstract class CommandBase<TParams = any, TResult extends CommandResult =
 {
   private _context: ExtensionContext;
   private _identifier: CMD_IDENTIFIER = undefined as any;
-  private _handler: () => void = undefined as any;
+  private _handler: (params: TParams) => TResult = undefined as any;
+  private _register: boolean = undefined as any;
 
   constructor(context: ExtensionContext) {
     this._context = context;
@@ -18,12 +19,18 @@ export abstract class CommandBase<TParams = any, TResult extends CommandResult =
   }
 
   register() {
+    if (!this._register) return;
+
     const disposable = commands.registerCommand(this._identifier, this._handler);
 
     this._context.subscriptions.push(disposable);
   }
 
   async executeAsync(params: TParams): Promise<TResult> {
+    if (!this._register) {
+      return this._handler(params);
+    }
+
     return commands.executeCommand<TResult>(this._identifier, params);
   }
 

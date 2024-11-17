@@ -5,7 +5,6 @@ const fs = require('fs');
 
 export function activate(context: vscode.ExtensionContext) {
   setCommandProvider(context);
-
   const cmdHandler = getCommandProvider();
   cmdHandler.forEach((command) => {
     command.register();

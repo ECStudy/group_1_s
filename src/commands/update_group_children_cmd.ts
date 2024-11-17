@@ -14,6 +14,7 @@ import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 @command({
   identifier: 'update.group.children',
   handler: updateGroupChildrenHandler,
+  register: true,
 })
 export class UpdateGroupChildrenCmd
   extends CommandBase<UpdateGroupChildrenParams, UpdateGroupChildrenResult>

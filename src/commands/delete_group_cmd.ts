@@ -8,6 +8,7 @@ import { CONFIRM_OPTION } from '../enums';
 @command({
   identifier: 'delete.group',
   handler: deleteGroupHandler,
+  register: true,
 })
 export class DeleteGroupCmd extends CommandBase<DeleteGroupParams, DeleteGroupResult> implements IDeleteGroupCmd {}
 

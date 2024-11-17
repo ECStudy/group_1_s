@@ -6,6 +6,7 @@ import { getCommandProvider, getTabGroupDataProvider } from '../provider';
 @command({
   identifier: 'update.group.name',
   handler: updateGroupNameHandler,
+  register: true,
 })
 export class UpdateGroupNameCmd
   extends CommandBase<UpdateGroupNameParams, UpdateGroupNameResult>

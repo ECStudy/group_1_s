@@ -6,6 +6,7 @@ import { getTabGroupDataProvider } from '../provider';
 @command({
   identifier: 'delete.tab',
   handler: deleteTabHandler,
+  register: true,
 })
 export class DeleteTabCmd extends CommandBase<DeleteTabParams, DeleteTabResult> implements IDeleteTabCmd {}
 
