@@ -9,7 +9,7 @@ import {
   GroupQuickPickItem,
 } from '../types';
 import { getCommandProvider, getTabGroupDataProvider } from '../provider';
-import { getOpenFileCommand, isUri } from '../utils';
+import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 
 @command({
   identifier: 'update.group.children',
@@ -40,6 +40,7 @@ async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Pr
   }
 
   const targetTab: TabAttr = {
+    id: generateUUID(),
     label: { label: getTabNameResult.name },
     uri: params,
     command: getOpenFileCommand({ uri: params }),
