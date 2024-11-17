@@ -14,60 +14,60 @@
   "contributes": {
     "commands": [
       {
-        "command": "create.group",
+        "command": "extension.create.group",
         "title": "새 그룹에 탭 추가"
       },
       {
-        "command": "delete.group",
+        "command": "extension.delete.group",
         "title": "그룹 삭제"
       },
       {
-        "command": "update.group.name",
+        "command": "extension.update.group.name",
         "title": "그룹 이름 수정"
       },
       {
-        "command": "update.group.children",
+        "command": "extension.update.group.children",
         "title": "기존 그룹에 탭 추가"
       },
       {
-        "command": "delete.tab",
+        "command": "extension.delete.tab",
         "title": "그룹에서 탭 삭제"
       }
     ],
     "menus": {
       "editor/title/context": [
         {
-          "command": "create.group",
+          "command": "extension.create.group",
           "group": "navigation"
         },
         {
-          "command": "update.group.children",
+          "command": "extension.update.group.children",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "create.group",
+          "command": "extension.create.group",
           "group": "navigation"
         },
         {
-          "command": "update.group.children",
+          "command": "extension.update.group.children",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "delete.tab",
+          "command": "extension.delete.tab",
           "when": "viewItem == defaultTab",
           "group": "navigation"
         },
         {
-          "command": "update.group.name",
+          "command": "extension.update.group.name",
           "when": "viewItem == defaultGroup",
           "group": "navigation"
         },
         {
-          "command": "delete.group",
+          "command": "extension.delete.group",
           "when": "viewItem == defaultGroup",
           "group": "navigation"
         }

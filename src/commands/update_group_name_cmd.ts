@@ -4,9 +4,8 @@ import { UpdateGroupNameParams, UpdateGroupNameResult, IUpdateGroupNameCmd } fro
 import { getCommandProvider, getTabGroupDataProvider } from '../provider';
 
 @command({
-  identifier: 'update.group.name',
+  identifier: 'extension.update.group.name',
   handler: updateGroupNameHandler,
-  register: true,
 })
 export class UpdateGroupNameCmd
   extends CommandBase<UpdateGroupNameParams, UpdateGroupNameResult>
@@ -14,7 +13,7 @@ export class UpdateGroupNameCmd
 
 async function updateGroupNameHandler(params: UpdateGroupNameParams): Promise<UpdateGroupNameResult> {
   const commandProvider = getCommandProvider();
-  const getGroupNameCommand = commandProvider.getCommand('get.group.name');
+  const getGroupNameCommand = commandProvider.getCommand('internal.get.group.name');
   const getGroupNameResult = await getGroupNameCommand.executeAsync();
   if (!getGroupNameResult.done) {
     return { done: false };

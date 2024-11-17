@@ -1,9 +1,9 @@
 // --------------------------------------
 // command identifier
 // --------------------------------------
-import { ACTION, FEATURE, MODIFIER } from '../enums';
+import { ACTION, FEATURE, MODIFIER, CMD_TYPE } from '../enums';
 import { ICommandBase } from './ICommadBase';
-export type CMD_IDENTIFIER = `${ACTION}.${FEATURE}` | `${ACTION}.${FEATURE}.${MODIFIER}`;
+export type CMD_IDENTIFIER = `${CMD_TYPE}.${ACTION}.${FEATURE}` | `${CMD_TYPE}.${ACTION}.${FEATURE}.${MODIFIER}`;
 
 // --------------------------------------
 // command interface, params, result
@@ -20,18 +20,20 @@ import {
   IDeleteTabCmd,
   IGetGroupNameCmd,
   IGetTabNameCmd,
+  IOpenGroupChildrenCmd,
   IUpdateGroupChildrenCmd,
   IUpdateGroupNameCmd,
 } from './commands';
 
 type command_types = {
-  ['create.group']: ICreateGroupCmd;
-  ['update.group.children']: IUpdateGroupChildrenCmd;
-  ['get.group.name']: IGetGroupNameCmd;
-  ['get.tab.name']: IGetTabNameCmd;
-  ['delete.tab']: IDeleteTabCmd;
-  ['delete.group']: IDeleteGroupCmd;
-  ['update.group.name']: IUpdateGroupNameCmd;
+  ['extension.create.group']: ICreateGroupCmd;
+  ['extension.update.group.children']: IUpdateGroupChildrenCmd;
+  ['internal.get.group.name']: IGetGroupNameCmd;
+  ['internal.get.tab.name']: IGetTabNameCmd;
+  ['extension.delete.tab']: IDeleteTabCmd;
+  ['extension.delete.group']: IDeleteGroupCmd;
+  ['extension.update.group.name']: IUpdateGroupNameCmd;
+  ['extension.open.group.children']: IOpenGroupChildrenCmd;
 };
 
 export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyof command_types
@@ -49,7 +51,7 @@ export * from './quick_pick';
 import * as vscode from 'vscode';
 export interface TabAttr {
   id: string;
-  resourseUri: vscode.Uri;
+  resourceUri: vscode.Uri;
   command?: vscode.Command;
 }
 export interface TabAttrWithGroupId extends TabAttr {
@@ -58,5 +60,5 @@ export interface TabAttrWithGroupId extends TabAttr {
 export interface ITreeItem {
   id: string;
   parentId?: string;
-  uri?: vscode.Uri;
+  resourceUri?: vscode.Uri;
 }

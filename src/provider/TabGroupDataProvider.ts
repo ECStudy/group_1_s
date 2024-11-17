@@ -87,11 +87,11 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     }
   }
 
-  createGroup({ id, label }: { id: string; label: vscode.TreeItemLabel }) {
-    const group = new Group(id, label);
+  createGroup(params: { id: string; label: vscode.TreeItemLabel; command?: vscode.Command }) {
+    const group = new Group(params);
 
-    this._groupMapper.set(id, group);
-    this._groups.push({ id });
+    this._groupMapper.set(params.id, group);
+    this._groups.push({ id: params.id });
 
     return group;
   }

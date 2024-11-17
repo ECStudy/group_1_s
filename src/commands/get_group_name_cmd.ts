@@ -5,7 +5,7 @@ import { window } from 'vscode';
 import { CONFIRM_OPTION } from '../enums';
 
 @command({
-  identifier: 'get.group.name',
+  identifier: 'internal.get.group.name',
   handler: getGroupNameHandler,
 })
 export class GetGroupNameCmd extends CommandBase<GetGroupNameParams, GetGroupNameResult> implements IGetGroupNameCmd {}

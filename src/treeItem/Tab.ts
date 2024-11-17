@@ -5,11 +5,12 @@ export class Tab extends vscode.TreeItem {
   resourceUri: vscode.Uri;
   contextValue: string;
 
-  constructor(id: string, resourceUri: vscode.Uri) {
-    super(resourceUri, vscode.TreeItemCollapsibleState.None);
+  constructor(params: { id: string; resourceUri: vscode.Uri; command?: vscode.Command }) {
+    super(params.resourceUri, vscode.TreeItemCollapsibleState.None);
 
-    this.id = id;
-    this.resourceUri = resourceUri;
+    this.id = params.id;
+    this.resourceUri = params.resourceUri;
     this.contextValue = 'defaultTab';
+    this.command = params.command;
   }
 }

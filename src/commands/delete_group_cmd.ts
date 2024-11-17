@@ -6,9 +6,8 @@ import { getTabGroupDataProvider } from '../provider';
 import { CONFIRM_OPTION } from '../enums';
 
 @command({
-  identifier: 'delete.group',
+  identifier: 'extension.delete.group',
   handler: deleteGroupHandler,
-  register: true,
 })
 export class DeleteGroupCmd extends CommandBase<DeleteGroupParams, DeleteGroupResult> implements IDeleteGroupCmd {}
 

@@ -9,12 +9,13 @@ export class Group extends vscode.TreeItem {
   contextValue: string;
   private _tabMapper: Map<string, Tab>;
 
-  constructor(id: string, label: vscode.TreeItemLabel) {
-    super(label, vscode.TreeItemCollapsibleState.Expanded);
+  constructor(params: { id: string; label: vscode.TreeItemLabel; command?: vscode.Command }) {
+    super(params.label, vscode.TreeItemCollapsibleState.Expanded);
 
-    this.id = id;
+    this.id = params.id;
+    this.label = params.label;
+    this.command = params.command;
     this.children = [];
-    this.label = label;
     this.contextValue = 'defaultGroup';
     this._tabMapper = new Map();
   }
@@ -23,16 +24,14 @@ export class Group extends vscode.TreeItem {
     return this.label.label;
   }
 
-  createTab(params: { id: string; resourseUri: vscode.Uri; command?: vscode.Command }) {
+  createTab(params: { id: string; resourceUri: vscode.Uri; command?: vscode.Command }) {
     const _tab = this._tabMapper.get(params.id);
     if (_tab) {
       return _tab;
     }
 
-    const tab = new Tab(params.id, params.resourseUri);
-    tab.command = params.command;
-
-    this.children.push({ id: params.id, parentId: this.id, uri: params.resourseUri });
+    const tab = new Tab(params);
+    this.children.push({ id: params.id, parentId: this.id, resourceUri: params.resourceUri });
     this._tabMapper.set(params.id, tab);
 
     return tab;

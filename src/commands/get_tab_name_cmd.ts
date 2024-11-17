@@ -5,7 +5,7 @@ import { GetTabNameParams, GetTabNameResult, IGetTabNameCmd } from '../types';
 import { isUri } from '../utils';
 
 @command({
-  identifier: 'get.tab.name',
+  identifier: 'internal.get.tab.name',
   handler: getTabNameHandler,
 })
 export class GetTabNameCmd extends CommandBase<GetTabNameParams, GetTabNameResult> implements IGetTabNameCmd {}

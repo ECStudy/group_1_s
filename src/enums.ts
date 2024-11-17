@@ -1,3 +1,8 @@
+export const enum CMD_TYPE {
+  extension = 'extension',
+  internal = 'internal',
+}
+
 export const enum ACTION {
   Create = 'create',
   Update = 'update',

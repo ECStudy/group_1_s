@@ -8,13 +8,12 @@ import {
   TabAttr,
   GroupQuickPickItem,
 } from '../types';
-import { getCommandProvider, getTabGroupDataProvider } from '../provider';
+import { getTabGroupDataProvider } from '../provider';
 import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 
 @command({
-  identifier: 'update.group.children',
+  identifier: 'extension.update.group.children',
   handler: updateGroupChildrenHandler,
-  register: true,
 })
 export class UpdateGroupChildrenCmd
   extends CommandBase<UpdateGroupChildrenParams, UpdateGroupChildrenResult>
@@ -35,7 +34,7 @@ async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Pr
 
   const targetTab: TabAttr = {
     id: generateUUID(),
-    resourseUri: params,
+    resourceUri: params,
     command: getOpenFileCommand({ uri: params }),
   };
 
