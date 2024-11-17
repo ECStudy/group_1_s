@@ -14,7 +14,14 @@ export * from './ICommadBase';
 // --------------------------------------
 // command interface mapper
 // --------------------------------------
-import { ICreateGroupCmd, IDeleteTabCmd, IGetGroupNameCmd, IGetTabNameCmd, IUpdateGroupChildrenCmd } from './commands';
+import {
+  ICreateGroupCmd,
+  IDeleteTabCmd,
+  IGetGroupNameCmd,
+  IGetTabNameCmd,
+  IUpdateGroupChildrenCmd,
+  IUpdateGroupNameCmd,
+} from './commands';
 
 type command_types = {
   ['create.group']: ICreateGroupCmd;
@@ -22,6 +29,7 @@ type command_types = {
   ['get.group.name']: IGetGroupNameCmd;
   ['get.tab.name']: IGetTabNameCmd;
   ['delete.tab']: IDeleteTabCmd;
+  ['update.group.name']: IUpdateGroupNameCmd;
 };
 
 export type CommandInterfaceOrDefault<T extends CMD_IDENTIFIER> = T extends keyof command_types

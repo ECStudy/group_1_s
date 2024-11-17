@@ -24,6 +24,10 @@
       {
         "command": "delete.tab",
         "title": "그룹에서 탭 삭제"
+      },
+      {
+        "command": "update.group.name",
+        "title": "그룹 이름 수정"
       }
     ],
     "menus": {
@@ -51,6 +55,11 @@
         {
           "command": "delete.tab",
           "when": "viewItem == defaultTab",
+          "group": "navigation"
+        },
+        {
+          "command": "update.group.name",
+          "when": "viewItem == defaultGroup",
           "group": "navigation"
         }
       ]
