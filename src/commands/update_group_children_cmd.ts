@@ -32,17 +32,9 @@ async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Pr
     return { done: false };
   }
 
-  const commandProvider = getCommandProvider();
-  const getTabNameCommand = commandProvider.getCommand('get.tab.name');
-  const getTabNameResult = await getTabNameCommand.executeAsync(params);
-  if (!getTabNameResult.done) {
-    return { done: false };
-  }
-
   const targetTab: TabAttr = {
     id: generateUUID(),
-    label: { label: getTabNameResult.name },
-    uri: params,
+    resourseUri: params,
     command: getOpenFileCommand({ uri: params }),
   };
 

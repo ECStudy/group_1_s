@@ -16,13 +16,6 @@ async function createGroupHandler(params: CreateGroupParams): Promise<CreateGrou
   }
 
   const commandProvider = getCommandProvider();
-
-  const getTabNameCommand = commandProvider.getCommand('get.tab.name');
-  const getTabNameResult = await getTabNameCommand.executeAsync(params);
-  if (!getTabNameResult.done) {
-    return { done: false };
-  }
-
   const groupNameCommand = commandProvider.getCommand('get.group.name');
   const getGroupNameResult = await groupNameCommand.executeAsync();
   if (!getGroupNameResult.done) {
@@ -37,8 +30,7 @@ async function createGroupHandler(params: CreateGroupParams): Promise<CreateGrou
 
   const tab: TabAttr = {
     id: generateUUID(),
-    label: { label: getTabNameResult.name },
-    uri: params,
+    resourseUri: params,
     command: getOpenFileCommand({ uri: params }),
   };
 

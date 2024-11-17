@@ -49,8 +49,7 @@ export * from './quick_pick';
 import * as vscode from 'vscode';
 export interface TabAttr {
   id: string;
-  label: vscode.TreeItemLabel;
-  uri: vscode.Uri;
+  resourseUri: vscode.Uri;
   command?: vscode.Command;
 }
 export interface TabAttrWithGroupId extends TabAttr {

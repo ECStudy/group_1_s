@@ -23,16 +23,16 @@ export class Group extends vscode.TreeItem {
     return this.label.label;
   }
 
-  createTab(params: { id: string; label: vscode.TreeItemLabel; uri: vscode.Uri; command?: vscode.Command }) {
+  createTab(params: { id: string; resourseUri: vscode.Uri; command?: vscode.Command }) {
     const _tab = this._tabMapper.get(params.id);
     if (_tab) {
       return _tab;
     }
 
-    const tab = new Tab(params.id, params.label, params.uri);
+    const tab = new Tab(params.id, params.resourseUri);
     tab.command = params.command;
 
-    this.children.push({ id: params.id, parentId: this.id, uri: params.uri });
+    this.children.push({ id: params.id, parentId: this.id, uri: params.resourseUri });
     this._tabMapper.set(params.id, tab);
 
     return tab;

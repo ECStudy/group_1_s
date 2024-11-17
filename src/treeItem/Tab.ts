@@ -2,20 +2,14 @@ import * as vscode from 'vscode';
 
 export class Tab extends vscode.TreeItem {
   id: string;
-  label: vscode.TreeItemLabel;
-  uri: vscode.Uri;
+  resourceUri: vscode.Uri;
   contextValue: string;
 
-  constructor(id: string, label: vscode.TreeItemLabel, uri: vscode.Uri) {
-    super(label, vscode.TreeItemCollapsibleState.None);
+  constructor(id: string, resourceUri: vscode.Uri) {
+    super(resourceUri, vscode.TreeItemCollapsibleState.None);
 
     this.id = id;
-    this.label = label;
-    this.uri = uri;
+    this.resourceUri = resourceUri;
     this.contextValue = 'defaultTab';
-  }
-
-  toString() {
-    return this.label.label;
   }
 }
