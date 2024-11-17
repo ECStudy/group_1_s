@@ -26,6 +26,10 @@
         "title": "그룹에서 탭 삭제"
       },
       {
+        "command": "delete.group",
+        "title": "그룹 삭제"
+      },
+      {
         "command": "update.group.name",
         "title": "그룹 이름 수정"
       }
@@ -59,6 +63,11 @@
         },
         {
           "command": "update.group.name",
+          "when": "viewItem == defaultGroup",
+          "group": "navigation"
+        },
+        {
+          "command": "delete.group",
           "when": "viewItem == defaultGroup",
           "group": "navigation"
         }

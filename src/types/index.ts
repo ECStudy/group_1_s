@@ -16,6 +16,7 @@ export * from './ICommadBase';
 // --------------------------------------
 import {
   ICreateGroupCmd,
+  IDeleteGroupCmd,
   IDeleteTabCmd,
   IGetGroupNameCmd,
   IGetTabNameCmd,
@@ -29,6 +30,7 @@ type command_types = {
   ['get.group.name']: IGetGroupNameCmd;
   ['get.tab.name']: IGetTabNameCmd;
   ['delete.tab']: IDeleteTabCmd;
+  ['delete.group']: IDeleteGroupCmd;
   ['update.group.name']: IUpdateGroupNameCmd;
 };
 
