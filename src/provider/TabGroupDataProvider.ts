@@ -96,6 +96,15 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     return group;
   }
 
+  getGroup(id: string) {
+    const group = this._groupMapper.get(id);
+    if (!group) {
+      throw new Error('no group');
+    }
+
+    return group;
+  }
+
   getGroups(ids?: string[]) {
     const groups: Group[] = [];
 
