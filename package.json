@@ -18,12 +18,20 @@
         "title": "새 그룹에 탭 추가"
       },
       {
-        "command": "extension.delete.group",
-        "title": "그룹 삭제"
+        "command": "extension.update.group.name",
+        "title": "그룹 이름 수정",
+        "icon": {
+          "light": "./resources/command_icon/light/edit.png",
+          "dark": "./resources/command_icon/dark/edit.png"
+        }
       },
       {
-        "command": "extension.update.group.name",
-        "title": "그룹 이름 수정"
+        "command": "extension.delete.group",
+        "title": "그룹 삭제",
+        "icon": {
+          "light": "./resources/command_icon/light/delete.png",
+          "dark": "./resources/command_icon/dark/delete.png"
+        }
       },
       {
         "command": "extension.update.group.children",
@@ -31,7 +39,11 @@
       },
       {
         "command": "extension.delete.tab",
-        "title": "그룹에서 탭 삭제"
+        "title": "그룹에서 탭 삭제",
+        "icon": {
+          "light": "./resources/command_icon/light/delete.png",
+          "dark": "./resources/command_icon/dark/delete.png"
+        }
       }
     ],
     "menus": {
@@ -59,17 +71,17 @@
         {
           "command": "extension.delete.tab",
           "when": "viewItem == defaultTab",
-          "group": "navigation"
+          "group": "inline"
         },
         {
           "command": "extension.update.group.name",
           "when": "viewItem == defaultGroup",
-          "group": "navigation"
+          "group": "inline@1"
         },
         {
           "command": "extension.delete.group",
           "when": "viewItem == defaultGroup",
-          "group": "navigation"
+          "group": "inline@2"
         }
       ]
     },
