@@ -81,6 +81,14 @@
         }
       ]
     },
+    "keybindings": [
+      {
+        "command": "extension.update.group.children",
+        "key": "ctrl+g",
+        "mac": "cmd+g",
+        "when": "editorTextFocus"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {

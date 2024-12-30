@@ -21,6 +21,10 @@ export class UpdateGroupChildrenCmd
   implements IUpdateGroupChildrenCmd {}
 
 async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Promise<UpdateGroupChildrenResult> {
+  if (params === undefined) {
+    params = vscode.window.activeTextEditor?.document.uri;
+  }
+
   if (!isUri(params)) {
     return { done: false };
   }
