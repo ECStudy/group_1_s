@@ -45,19 +45,17 @@
     "menus": {
       "editor/title/context": [
         {
-          "command": "extension.create.group",
-          "group": "navigation"
-        },
-        {
           "command": "extension.update.group.children",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.create.group",
+          "command": "extension.update.group.children",
           "group": "navigation"
-        },
+        }
+      ],
+      "editor/context": [
         {
           "command": "extension.update.group.children",
           "group": "navigation"

@@ -9,7 +9,7 @@ import {
   GroupQuickPickItem,
 } from '../types';
 import { getCommandProvider, getTabGroupDataProvider } from '../provider';
-import { generateUUID, getOpenFileCommand, isUri } from '../utils';
+import { generateUUID, getOpenFileCommand, isTextEditor, isUri } from '../utils';
 import { randomUUID } from 'crypto';
 
 @command({
@@ -23,6 +23,10 @@ export class UpdateGroupChildrenCmd
 async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Promise<UpdateGroupChildrenResult> {
   if (params === undefined) {
     params = vscode.window.activeTextEditor?.document.uri;
+  }
+
+  if (isTextEditor(params)) {
+    params = params.document.uri;
   }
 
   if (!isUri(params)) {
