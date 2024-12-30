@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.create.group",
-        "title": "새 그룹에 탭 추가"
-      },
-      {
         "command": "extension.update.group.name",
         "title": "그룹 이름 수정",
         "icon": {
@@ -35,7 +31,7 @@
       },
       {
         "command": "extension.update.group.children",
-        "title": "기존 그룹에 탭 추가"
+        "title": "그룹에 탭 추가"
       },
       {
         "command": "extension.delete.tab",

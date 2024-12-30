@@ -5,7 +5,7 @@ import { getCommandProvider, getTabGroupDataProvider } from '../provider';
 import { generateUUID, getOpenFileCommand, isUri } from '../utils';
 
 @command({
-  identifier: 'extension.create.group',
+  identifier: 'internal.create.group',
   handler: createGroupHandler,
 })
 export class CreateGroupCmd extends CommandBase<CreateGroupParams, CreateGroupResult> implements ICreateGroupCmd {}

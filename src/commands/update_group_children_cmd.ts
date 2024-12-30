@@ -8,8 +8,9 @@ import {
   TabAttr,
   GroupQuickPickItem,
 } from '../types';
-import { getTabGroupDataProvider } from '../provider';
+import { getCommandProvider, getTabGroupDataProvider } from '../provider';
 import { generateUUID, getOpenFileCommand, isUri } from '../utils';
+import { randomUUID } from 'crypto';
 
 @command({
   identifier: 'extension.update.group.children',
@@ -27,9 +28,24 @@ async function updateGroupChildrenHandler(params: UpdateGroupChildrenParams): Pr
   const tabGroupProvider = getTabGroupDataProvider();
   const groups = tabGroupProvider.getGroupsAsQuickPickItem();
 
+  const idOfCreateNew = randomUUID();
+  const createNewQuickPickItem: GroupQuickPickItem = {
+    id: idOfCreateNew,
+    label: '새 그룹',
+  };
+  groups.unshift(createNewQuickPickItem);
+
   const picked_group = await vscode.window.showQuickPick<GroupQuickPickItem>(groups);
   if (!picked_group) {
     return { done: false };
+  }
+
+  if (picked_group.id === idOfCreateNew) {
+    const commandProvider = getCommandProvider();
+    const createGroupCommand = commandProvider.getCommand('internal.create.group');
+    const result = await createGroupCommand.executeAsync(params);
+
+    return result;
   }
 
   const targetTab: TabAttr = {
