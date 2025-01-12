@@ -1,19 +1,22 @@
 import * as vscode from 'vscode';
 import { GroupQuickPickItem, ITreeItem, TabAttr, TabAttrWithGroupId } from '../types';
 import { Group, Tab } from '../treeItem';
+import { TabGroupStateManager } from '../state';
 
 export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> {
   private _context: vscode.ExtensionContext;
-  private _groups: ITreeItem[];
-  private _groupMapper: Map<string, Group>;
+  private _state: TabGroupStateManager;
+  // private _groups: ITreeItem[];
+  // private _groupMapper: Map<string, Group>;
 
   private _onDidChangeTreeData: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
   readonly onDidChangeTreeData: vscode.Event<void> = this._onDidChangeTreeData.event;
 
   constructor(context: vscode.ExtensionContext) {
     this._context = context;
-    this._groups = [];
-    this._groupMapper = new Map();
+    this._state = new TabGroupStateManager(this._context, 'TabGroupDataProvider');
+    // this._groups = [];
+    // this._groupMapper = new Map();
   }
 
   refresh() {
@@ -21,19 +24,32 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
   }
 
   getTreeItem(element: ITreeItem) {
-    const group = this._groupMapper.get(element.id);
+    const group = this._state.getGroupMapper()[element.id];
     if (group) {
-      return group;
+      if (group instanceof Group) {
+        return group;
+      }
+
+      return this.createGroup(group);
     }
 
-    const parentGroup = this._groupMapper.get(element.parentId ?? '');
+    const parentGroup = this._state.getGroupMapper()[element.parentId ?? ''];
     if (!parentGroup) {
       throw new Error('no parent');
     }
 
     const tab = parentGroup.getTab(element.id);
     if (tab) {
-      return tab;
+      if (tab instanceof Tab) {
+        return tab;
+      }
+
+      return this.createTab({
+        groupId: element.parentId ?? '',
+        id: (tab as Tab).id,
+        resourceUri: (tab as Tab).resourceUri,
+        command: (tab as Tab).command,
+      });
     }
 
     throw new Error('no tree item');
@@ -41,11 +57,10 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
 
   getChildren(element?: ITreeItem) {
     if (!element) {
-      return this._groups;
+      return this._state.getGroups();
     }
 
-    const group = this._groupMapper.get(element.id);
-
+    const group = this._state.getGroupMapper()[element.id];
     if (!group) {
       throw new Error('no group');
     }
@@ -54,18 +69,21 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
   }
 
   createTab(params: TabAttrWithGroupId) {
-    const group = this._groupMapper.get(params.groupId);
+    const group = this._state.getGroupMapper()[params.groupId];
     if (!group) {
       throw new Error('no group');
     }
 
-    return group.createTab(params);
+    const tab = group.createTab(params);
+    this._state.updateGroup(group);
+
+    return tab;
   }
 
   getTab(groupId: string, tabId: string): Tab;
   getTab(groupId: string, predicate: (tab: Tab) => boolean): Tab;
   getTab(groupId: string, predicate: string | ((tab: Tab) => boolean)): Tab {
-    const group = this._groupMapper.get(groupId);
+    const group = this._state.getGroupMapper()[groupId];
     if (!group) {
       throw new Error('no group');
     }
@@ -76,7 +94,7 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
   deleteTab(groupId: string, tabId: string): void;
   deleteTab(groupId: string, predicate: (tab: Tab) => boolean): void;
   deleteTab(groupId: string, predicate: string | ((tab: Tab) => boolean)): void {
-    const group = this._groupMapper.get(groupId);
+    const group = this._state.getGroupMapper()[groupId];
     if (!group) {
       throw new Error('no group');
     }
@@ -85,19 +103,28 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     if (group.children.length === 0) {
       this.deleteGroup(groupId);
     }
+
+    this._state.updateGroup(group);
   }
 
-  createGroup(params: { id: string; label: vscode.TreeItemLabel; command?: vscode.Command }) {
+  createGroup(params: {
+    id: string;
+    label: vscode.TreeItemLabel;
+    command?: vscode.Command;
+    children?: ITreeItem[];
+    tabMapper?: Record<string, Tab>;
+  }) {
     const group = new Group(params);
 
-    this._groupMapper.set(params.id, group);
-    this._groups.push({ id: params.id });
+    // this._state.getGroupMapper().set(params.id, group);
+    // this._state.getGroups().push({ id: params.id });
+    this._state.addGroup(group);
 
     return group;
   }
 
   getGroup(id: string) {
-    const group = this._groupMapper.get(id);
+    const group = this._state.getGroupMapper()[id];
     if (!group) {
       throw new Error('no group');
     }
@@ -110,14 +137,14 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
 
     if (ids) {
       ids.forEach((id) => {
-        const group = this._groupMapper.get(id);
+        const group = this._state.getGroupMapper()[id];
         if (group) groups.push(group);
       });
     }
 
     if (!ids) {
-      this._groups.forEach(({ id }) => {
-        const group = this._groupMapper.get(id);
+      this._state.getGroups().forEach(({ id }) => {
+        const group = this._state.getGroupMapper()[id];
         if (group) groups.push(group);
       });
     }
@@ -130,7 +157,7 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
 
     if (ids) {
       ids.forEach((group_id) => {
-        const group = this._groupMapper.get(group_id);
+        const group = this._state.getGroupMapper()[group_id];
         if (!group) return;
 
         groups.push({
@@ -141,8 +168,8 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     }
 
     if (!ids) {
-      this._groups.forEach(({ id }) => {
-        const group = this._groupMapper.get(id);
+      this._state.getGroups().forEach(({ id }) => {
+        const group = this._state.getGroupMapper()[id];
         if (!group) return;
 
         groups.push({
@@ -157,12 +184,12 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
 
   hasGroup(params: { label?: string } | { id?: string }) {
     if ('id' in params && params.id) {
-      return this._groupMapper.has(params.id);
+      return !!this._state.getGroupMapper()[params.id];
     }
 
     if ('label' in params && params.label) {
-      return !!this._groups.find(({ id }) => {
-        return this._groupMapper.get(id)?.toString() === params.label;
+      return !!this._state.getGroups().find(({ id }) => {
+        return this._state.getGroupMapper()[id]?.toString() === params.label;
       });
     }
 
@@ -174,7 +201,7 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     label?: vscode.TreeItemLabel;
     collapsibleState?: vscode.TreeItemCollapsibleState;
   }) {
-    const group = this._groupMapper.get(params.id);
+    const group = this._state.getGroupMapper()[params.id];
     if (!group) return;
 
     if (params.label) {
@@ -184,10 +211,12 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     if (params.collapsibleState) {
       group.collapsibleState = params.collapsibleState;
     }
+
+    this._state.updateGroup(group);
   }
 
   pushChildren({ groupId, children }: { groupId: string; children: TabAttr[] }) {
-    const group = this._groupMapper.get(groupId);
+    const group = this._state.getGroupMapper()[groupId];
     if (!group) {
       throw new Error('no group');
     }
@@ -195,11 +224,14 @@ export class TabGroupDataProvider implements vscode.TreeDataProvider<ITreeItem> 
     for (const child of children) {
       group.createTab(child);
     }
+
+    this._state.updateGroup(group);
   }
 
   deleteGroup(groupId: string) {
-    this._groupMapper.delete(groupId);
-    this._groups = this._groups.filter(({ id }) => id !== groupId);
+    // delete this._state.getGroupMapper()[groupId];ß
+    // const newGroups = this._state.getGroups().filter(({ id }) => id !== groupId);
+    this._state.deleteGroup(groupId);
   }
 }
 

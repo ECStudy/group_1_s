@@ -7,17 +7,23 @@ export class Group extends vscode.TreeItem {
   id: string;
   label: vscode.TreeItemLabel;
   contextValue: string;
-  private _tabMapper: Map<string, Tab>;
+  private _tabMapper: Record<string, Tab>;
 
-  constructor(params: { id: string; label: vscode.TreeItemLabel; command?: vscode.Command }) {
+  constructor(params: {
+    id: string;
+    label: vscode.TreeItemLabel;
+    command?: vscode.Command;
+    children?: ITreeItem[];
+    _tabMapper?: Record<string, Tab>;
+  }) {
     super(params.label, vscode.TreeItemCollapsibleState.Expanded);
 
     this.id = params.id;
     this.label = params.label;
     this.command = params.command;
-    this.children = [];
+    this.children = params.children ?? [];
     this.contextValue = 'defaultGroup';
-    this._tabMapper = new Map();
+    this._tabMapper = params._tabMapper ?? {};
   }
 
   toString() {
@@ -25,14 +31,14 @@ export class Group extends vscode.TreeItem {
   }
 
   createTab(params: { id: string; resourceUri: vscode.Uri; command?: vscode.Command }) {
-    const _tab = this._tabMapper.get(params.id);
-    if (_tab) {
+    const _tab = this._tabMapper[params.id];
+    if (_tab && _tab instanceof Tab) {
       return _tab;
     }
 
     const tab = new Tab(params);
     this.children.push({ id: params.id, parentId: this.id, resourceUri: params.resourceUri });
-    this._tabMapper.set(params.id, tab);
+    this._tabMapper[params.id] = tab;
 
     return tab;
   }
@@ -52,7 +58,7 @@ export class Group extends vscode.TreeItem {
   }
 
   private _getTabById(id: string) {
-    const tab = this._tabMapper.get(id);
+    const tab = this._tabMapper[id];
     if (!tab) {
       throw new Error('no tab');
     }
@@ -62,7 +68,7 @@ export class Group extends vscode.TreeItem {
 
   private _getTabByCallback(predicate: (tab: Tab) => boolean) {
     for (const { id } of this.children) {
-      const tab = this._tabMapper.get(id);
+      const tab = this._tabMapper[id];
       if (!tab) continue;
 
       if (predicate(tab)) {
@@ -86,13 +92,13 @@ export class Group extends vscode.TreeItem {
   }
 
   private _deleteTabById(id: string) {
-    this._tabMapper.delete(id);
+    delete this._tabMapper[id];
     this.children = this.children.filter((tab) => tab.id !== id);
   }
 
   private _deleteTabByCallback(predicate: (tab: Tab) => boolean) {
     for (const { id } of this.children) {
-      const tab = this._tabMapper.get(id);
+      const tab = this._tabMapper[id];
       if (!tab) continue;
 
       if (predicate(tab)) {
